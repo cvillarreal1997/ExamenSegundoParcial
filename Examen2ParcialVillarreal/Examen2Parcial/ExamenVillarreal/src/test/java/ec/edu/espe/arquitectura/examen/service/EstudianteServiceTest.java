@@ -45,7 +45,7 @@ public class EstudianteServiceTest {
         estudiante.setCorreo("crvillarreal1@espe.edu.ec");
         estudiante.setFechanacimiento(fechaNacimiento);
         estudiante.setNombres("Carlos Ramiro");
-        estudiante.setPais("EC");
+        estudiante.setPais("593");
         estudiante.setFechacreacion(fechaCreacion);
         
 
