@@ -1,0 +1,44 @@
+image: docker:latest
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+
+stages:
+  - build
+  - package
+  - deploy
+
+maven-build:
+  image: maven:3.8.4-openjdk-11
+  stage: build
+  script:
+    - cd Registro-Civil-Service
+    - mvn package -B
+  artifacts:
+    paths:
+      - Registro-Civil-Service/target/*.jar
+
+docker-build:
+  stage: package
+  script:
+    - docker build -t registry.gitlab.com/banco-banquito/registro-civil_sistemas-externos_bbq .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker push registry.gitlab.com/banco-banquito/registro-civil_sistemas-externos_bbq
+
+k8s-deploy:
+  image: google/cloud-sdk
+  stage: deploy
+  script:
+    - echo "$GOOGLE_KEY" > key.json
+    - gcloud auth activate-service-account --key-file key.json
+    - gcloud config set compute/zone us-central1-c
+    - gcloud config set project kube-test-jazamora4
+    - gcloud config set container/use_client_certificate False
+    - gcloud container clusters get-credentials actuator-sample
+    - kubectl delete secret registry.gitlab.com || true
+    - kubectl create secret docker-registry registry.gitlab.com --docker-server=https://registry.gitlab.com --docker-username=bbq-admin --docker-password=$REGISTRY_PASSWD --docker-email=jazamora4@espe.edu.ec
+    - kubectl delete -f deployment.yml || true
+    - kubectl apply -f deployment.yml

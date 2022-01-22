@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registro-civil
+  labels:
+    apps: registro-civil
+spec:
+  selector:
+    matchLabels:
+      app: registro-civil
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: registro-civil
+    spec:
+      containers:
+        - name: registro-civil
+          image: registry.gitlab.com/banco-banquito/registro-civil_sistemas-externos_bbq
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: registry.gitlab.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registro-civil-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: registro-civil
