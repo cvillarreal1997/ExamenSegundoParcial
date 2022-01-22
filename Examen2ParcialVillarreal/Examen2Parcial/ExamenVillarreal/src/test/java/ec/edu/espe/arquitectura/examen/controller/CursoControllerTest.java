@@ -23,6 +23,7 @@ import ec.edu.espe.arquitectura.examen.model.Estudiante;
 import ec.edu.espe.arquitectura.examen.service.CursoService;
 import ec.edu.espe.arquitectura.examen.service.EstudianteService;
 import java.util.List;
+import static javax.swing.UIManager.get;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author terry
  */
-@WebMvcTest(EstudianteController.class)
+@WebMvcTest(CursoController.class)
 public class CursoControllerTest {
       @Autowired
     private MockMvc mvc;
@@ -81,14 +83,7 @@ public class CursoControllerTest {
     public void testBuscarPorArea() throws Exception {
         String area="MATEMATICA";
         when(service.buscarPorArea(area)).thenReturn(List.of(curso));
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestBody = ow.writeValueAsString(area);
-        mvc.perform(post("/api/v1/estudiante")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                .andExpect(status().isOk());
+        mvc.perform((RequestBuilder) get("/api/v1/curso")) .andExpect(status().isOk());
 
     }
 
