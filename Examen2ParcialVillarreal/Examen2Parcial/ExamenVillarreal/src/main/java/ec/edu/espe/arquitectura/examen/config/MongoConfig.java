@@ -39,12 +39,12 @@ public class MongoConfig extends AbstractMongoClientConfiguration{
     
     @Override
     protected String getDatabaseName() {
-        return "registro-civil2021";
+        return "matriculas";
     }
 
     @Override
     public MongoClient mongoClient() {
-        return MongoClients.create("mongodb+srv://inmob:xnuvcMATMr6eRZQw@jdcluster.almnw.gcp.mongodb.net/registro-civil2021?retryWrites=true&w=majority");
+        return MongoClients.create("mongodb+srv://inmob:xnuvcRETMr6eRZQw@carloscluster.almnw.gcp.mongodb.net/matriculas?retryWrites=true&w=majority");
     }
 
     @Override
